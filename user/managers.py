@@ -3,8 +3,7 @@ from django.contrib.auth.base_user import BaseUserManager
 
 class CustomUserManager(BaseUserManager):
     """
-    Менеджер пользовательской модели , в котором login является уникальным
-    идентификатором для аутентификации вместо имени пользователя.
+    Менеджер пользовательской модели
     """
     def create_user(self, email, password, **extra_fields):
         """
@@ -19,7 +18,7 @@ class CustomUserManager(BaseUserManager):
 
     def create_superuser(self, email, password, **extra_fields):
         """
-        Создает суперпользователя с принятыми login и password
+        Создает суперпользователя с принятыми email и password
         """
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
