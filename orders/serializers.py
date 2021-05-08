@@ -1,5 +1,5 @@
 from orders.models import Category, Image, SubCategory, Order, Comment
-
+from rest_framework.fields import CurrentUserDefault
 from rest_framework import serializers
 
 
@@ -22,12 +22,16 @@ class SubCategorySerializer(serializers.ModelSerializer):
 
 class CommentCreateSerializer(serializers.ModelSerializer):
     """ добавление комментария """
-    user = serializers.SlugRelatedField(slug_field='name', read_only=True)
-    order = serializers.SlugRelatedField(slug_field='name', read_only=True)
 
     class Meta:
         model = Comment
-        fields = '__all__'
+        fields = "__all__"
+
+
+class CommentViewSerializer(CommentCreateSerializer):
+    """ отображение полей комментария """
+    user = serializers.SlugRelatedField(slug_field='name', read_only=True)
+    order = serializers.SlugRelatedField(slug_field='name', read_only=True)
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -43,7 +47,7 @@ class OrderDetailSerializer(serializers.ModelSerializer):
     user = serializers.SlugRelatedField(slug_field='name', read_only=True)
     category = serializers.SlugRelatedField(slug_field='name', read_only=True)
     sub_category = serializers.SlugRelatedField(slug_field='name', read_only=True)
-    comments = CommentCreateSerializer(many=True)
+    comments = CommentViewSerializer(many=True)
     image = serializers.SlugRelatedField(slug_field='name', read_only=True, many=True)
 
     class Meta:

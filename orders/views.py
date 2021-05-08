@@ -2,7 +2,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from orders.models import Category, SubCategory, Order
 from orders.serializers import (CategorySerializer, SubCategorySerializer,
-                                OrderSerializer, OrderDetailSerializer)
+                                OrderSerializer, OrderDetailSerializer,
+                                CommentViewSerializer, CommentCreateSerializer)
 
 class CategoryListView(APIView):
     """ Выводим список категорий """
@@ -16,8 +17,8 @@ class CategoryListView(APIView):
 class SubCategoryListView(APIView):
     """ выводим список подкатегорий """
 
-    def get(self, request):
-        subcategory = SubCategory.objects.all()
+    def get(self, request, pk):
+        subcategory = SubCategory.objects.filter(category_id=pk)
         serializer = SubCategorySerializer(subcategory, many=True)
         return Response(serializer.data)
 
@@ -25,8 +26,8 @@ class SubCategoryListView(APIView):
 class OrderListView(APIView):
     """ выводим список заказов """
 
-    def get(self, request):
-        orders = Order.objects.filter(publish=True)
+    def get(self, request, pk):
+        orders = Order.objects.filter(publish=True, sub_category_id=pk)
         serializer = OrderSerializer(orders, many=True)
         return Response(serializer.data)
 
@@ -38,3 +39,16 @@ class OrderDetailView(APIView):
         order = Order.objects.get(id=pk)
         serializer = OrderDetailSerializer(order)
         return Response(serializer.data)
+
+
+class CommentCreateView(APIView):
+    """ создание комментария к заказу """
+
+    def post(self, request, format=None):
+        print(request.data)
+        serializer = CommentCreateSerializer(data=request.data)
+        request.data['user'] = request.user.id
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=404)

@@ -6,7 +6,6 @@ User = AUTH_USER_MODEL
 
 class Category(models.Model):
     name = models.CharField(max_length=50, verbose_name='название')
-    slug = models.SlugField(max_length=50)
 
     def __str__(self):
         return self.name
@@ -18,7 +17,6 @@ class Category(models.Model):
 
 class SubCategory(models.Model):
     name = models.CharField(max_length=50, verbose_name='название')
-    slug = models.SlugField(max_length=50)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL,
                                  null=True, blank=True,
                                  verbose_name='Категория')
@@ -72,6 +70,7 @@ class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='пользователь')
     order = models.ForeignKey(Order, on_delete=models.CASCADE, verbose_name='заказ',
                               related_name='comments')
+    text = models.TextField(verbose_name='текст', default='* * *')
 
     def __str__(self):
         return f'{self.user} - {self.order}'
